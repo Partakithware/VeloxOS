@@ -11,7 +11,8 @@ typedef struct DesktopIcon DesktopIcon;
 // Window types
 typedef enum {
     WINDOW_NORMAL,
-    WINDOW_TERMINAL
+    WINDOW_TERMINAL,
+    WINDOW_FILE_EXPLORER // New Type
 } WindowType;
 
 // Window structure
@@ -37,6 +38,8 @@ struct Window {
     int terminal_cursor_x;      // Character position
     int terminal_cursor_y;      // Line number
     int terminal_buffer_size;
+
+    void* extra_data;           // Generic pointer for app-specific context
     
     Window* next;
 };
@@ -50,6 +53,15 @@ struct DesktopIcon {
     void (*on_click)(void);  // Callback when clicked
     DesktopIcon* next;
 };
+
+
+// Explorer context structure
+typedef struct {
+    char current_path[128];
+    int selected_idx;
+    int scroll_offset;
+    int file_count;
+} FileExplorerContext;
 
 // Desktop configuration
 #define TASKBAR_HEIGHT 32
@@ -87,6 +99,11 @@ Window* kdesktop_create_window(int x, int y, int width, int height, const char* 
 Window* kdesktop_create_terminal(int x, int y, int width, int height);
 void kdesktop_destroy_window(Window* win);
 void kdesktop_focus_window(Window* win);
+
+// Explorer 
+Window* kdesktop_create_explorer(int x, int y, int width, int height);
+void kdesktop_render_file_explorer(Window* win, void* ctx);
+void kdesktop_handle_explorer_input(Window* win, OS_Event* e);
 
 // Desktop icon management
 DesktopIcon* kdesktop_create_icon(int x, int y, const char* label, void (*callback)(void));
