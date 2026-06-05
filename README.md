@@ -1,6 +1,6 @@
 # VeloxOS
 
-A hobby x86-64 "operating system/kernel" (in quotes yes...) built from scratch targeting UEFI firmware directly. No GRUB, no BIOS compatibility layer. VeloxOS boots via its own `BOOTX64.EFI` application, initialises a complete hardware abstraction stack, and launches a graphical desktop environment backed by a custom filesystem.
+A hobby x86-64 "operating system/kernel" (in quotes yes...) built from scratch targeting UEFI firmware directly. No GRUB, no BIOS compatibility layer. VeloxOS boots via its own `BOOTX64.EFI` application, initialises a complete hardware abstraction stack, and launches a graphical desktop environment backed by a custom filesystem. (To start desktop: enter "desktop" no quotes)
 
 ---
 
