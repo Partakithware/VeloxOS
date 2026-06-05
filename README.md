@@ -4,6 +4,8 @@ A hobby x86-64 "operating system/kernel" (in quotes yes...) built from scratch t
 
 ---
 
+![V0Desktop](./VeloxOSv0.png)
+
 ## Table of Contents
 
 - [Architecture Overview](#architecture-overview)
