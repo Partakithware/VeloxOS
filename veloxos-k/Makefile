@@ -84,8 +84,11 @@ vmm.o: vmm.c vmm.h
 ramdisk.o: ramdisk.c ramdisk.h
 	$(CC) $(CFLAGS) -c ramdisk.c -o ramdisk.o
 
-$(SO): interrupts.o idt.o kernel_native.o mouse_k.o keyboard_k.o event.o font.o console.o commands.o memory.o kstdlib.o font_data.o font_ttf.o kstring.o timer.o pmm.o double_buffer.o kdesktop.o vmm.o ramdisk.o
-	$(LD) $(LDFLAGS) interrupts.o idt.o kernel_native.o mouse_k.o keyboard_k.o event.o font.o console.o commands.o memory.o kstdlib.o font_data.o font_ttf.o kstring.o timer.o pmm.o double_buffer.o kdesktop.o vmm.o ramdisk.o -o $@ -lefi -lgnuefi
+explorer.o: explorer.c
+	$(CC) $(CFLAGS) -c explorer.c -o explorer.o
+
+$(SO): interrupts.o idt.o kernel_native.o mouse_k.o keyboard_k.o event.o font.o console.o commands.o memory.o kstdlib.o font_data.o font_ttf.o kstring.o timer.o pmm.o double_buffer.o kdesktop.o vmm.o ramdisk.o explorer.o
+	$(LD) $(LDFLAGS) interrupts.o idt.o kernel_native.o mouse_k.o keyboard_k.o event.o font.o console.o commands.o memory.o kstdlib.o font_data.o font_ttf.o kstring.o timer.o pmm.o double_buffer.o kdesktop.o vmm.o ramdisk.o explorer.o -o $@ -lefi -lgnuefi
 
 $(TARGET): $(SO)
 	$(OBJCOPY) -j .text -j .sdata -j .data -j .dynamic \
