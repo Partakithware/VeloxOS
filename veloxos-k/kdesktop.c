@@ -129,6 +129,33 @@ void on_terminal_icon_click(void) {
     kdesktop_create_terminal(150, 100, 600, 400);
 }
 
+// Callback for Explorer icon
+void on_explorer_icon_click(void) {
+    // Stagger the default spawn position slightly from the terminal
+    kdesktop_create_explorer(200, 150, 500, 350); 
+}
+
+// Create the Explorer Window
+Window* kdesktop_create_explorer(int x, int y, int width, int height) {
+    Window* win = kdesktop_create_window(x, y, width, height, "VeloxFS Explorer", WINDOW_FILE_EXPLORER);
+    if (!win) return NULL;
+    
+    // Allocate our specific context
+    FileExplorerContext* ctx = (FileExplorerContext*)kmalloc(sizeof(FileExplorerContext));
+    if (ctx) {
+        kmemset(ctx, 0, sizeof(FileExplorerContext));
+        str_copy(ctx->current_path, "/", 128);
+        ctx->selected_idx = 0;
+        ctx->scroll_offset = 0;
+        ctx->file_count = 0; // To be populated by VeloxFS integration later
+    }
+    
+    win->extra_data = ctx;
+    win->bg_color = ADWAITA_WINDOW_BG;
+    
+    return win;
+}
+
 // Initialize desktop
 void kdesktop_init(void) {
     window_list = NULL;
@@ -143,6 +170,7 @@ void kdesktop_init(void) {
     
     // Create desktop icons
     kdesktop_create_icon(30, 30, "Terminal", on_terminal_icon_click);
+    kdesktop_create_icon(30, 130, "Files", on_explorer_icon_click);
     
     // Create a welcome window
     kdesktop_create_window(100, 100, 400, 200, "Welcome!", WINDOW_NORMAL);
@@ -225,6 +253,7 @@ Window* kdesktop_create_window(int x, int y, int width, int height, const char* 
     
     return win;
 }
+
 
 // Focus a window
 void kdesktop_focus_window(Window* win) {
@@ -528,6 +557,8 @@ void kdesktop_render(void) {
             kdesktop_draw_window(win);
             if (win->type == WINDOW_TERMINAL) {
                 kdesktop_terminal_render(win);
+            } else if (win->type == WINDOW_FILE_EXPLORER) {
+                kdesktop_render_file_explorer(win, win->extra_data);
             }
         }
     }
@@ -536,6 +567,8 @@ void kdesktop_render(void) {
         kdesktop_draw_window(focused_window);
         if (focused_window->type == WINDOW_TERMINAL) {
             kdesktop_terminal_render(focused_window);
+        } else if (focused_window->type == WINDOW_FILE_EXPLORER) {
+            kdesktop_render_file_explorer(focused_window, focused_window->extra_data);
         }
     }
     
@@ -691,7 +724,10 @@ void kdesktop_handle_keyboard(OS_Event* e) {
                 focused_window->input_buffer[focused_window->input_pos++] = ascii;
             }
         }
-    }
+    } else if (focused_window->type == WINDOW_FILE_EXPLORER) {
+            // Route the event directly to the explorer's logic
+            kdesktop_handle_explorer_input(focused_window, e);
+        }
 }
 
 
